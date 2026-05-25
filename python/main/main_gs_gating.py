@@ -1,6 +1,7 @@
 from ..io.resource import read_data
 from ..ml.ml_utils import get_quantiles, get_cluster_labels
 from ..ml.grid_search_gating import gs_gating_rf_with_cv
+from ..ml.optimal import create_optimal_gating_model
 import numpy as np
 
 
@@ -22,6 +23,11 @@ q_lower, q_upper = 20, 80
 ########
 # gs_gating_rf_with_cv(res_hba2.data, res_hba2.target, lower_quantile_value=lower_quantile_value, upper_quantile_value=upper_quantile_value, preprocess=True, ignore_warn=False)
 
+###################
+#  Optimal model  #
+###################
+# create_optimal_gating_model('HbA2', 'RF', res_hba2.data, res_hba2.target, lower_quantile_value, upper_quantile_value, k=5, preprocess=True, verbose=True)
+
 
 ##############################  HbF  ##############################
 
@@ -38,3 +44,7 @@ q_lower, q_upper = 20, 80
 ########
 # gs_gating_rf_with_cv(res_hbf.data, res_hbf.target, lower_quantile_value=lower_quantile_value, upper_quantile_value=upper_quantile_value, preprocess=True, ignore_warn=False)
 
+####################
+#  Optimal models  #
+####################
+# create_optimal_gating_model('HbF', 'RF', res_hbf.data, res_hbf.target, lower_quantile_value, upper_quantile_value, k=5, preprocess=True, verbose=True)
