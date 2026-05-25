@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+/input
+.idea
+.configs
+.directory
+*.kdev4
