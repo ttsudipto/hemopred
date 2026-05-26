@@ -2,6 +2,7 @@ from ..io.resource import read_data
 from ..ml.ml_utils import split_cv_blind_data, get_quantiles, get_cluster_labels
 from ..ml.grid_search_moe import gs_with_cv
 from ..ml.optimal import create_optimal_gating_model, create_optimal_moe_model
+from ..pickler.pickler import dump_moe_model_to_file, load_moe_model_from_file
 import numpy as np
 
 input_file_name = 'PGIMER_HPLC_2024_CBC_Data_v2.tsv'
@@ -70,6 +71,22 @@ gating_model = create_optimal_gating_model('HbA2', 'RF', res_hba2.data, res_hba2
 #############################
 optimal_model_hba2 = create_optimal_moe_model('HbA2', None, cv_res_hba2.data, cv_res_hba2.target, blind_res_hba2.data, blind_res_hba2.target, cv_res_hba2_labels, gating_model, (q_lower/100, q_upper/100), k=5, preprocess=True, verbose=True)
 
+################
+#  Save model  #
+################
+# dump_moe_model_to_file(optimal_model_hba2, 'HbA2')
+# dump_moe_model_to_file(optimal_model_hba2, 'HbA2', without_data=True)
+
+################
+#  Load model  #
+################
+optimal_model_hba2_loaded = load_moe_model_from_file('HbA2')
+result_blind = optimal_model_hba2_loaded.predict_blind_without_cv(blind_res_hba2.data, blind_res_hba2.target, preprocess=True)
+print(result_blind)
+# optimal_model_hba2_loaded_wo_data = load_moe_model_from_file('HbA2', without_data=True)
+# result_blind = optimal_model_hba2_loaded_wo_data.predict_blind_without_cv(blind_res_hba2.data, blind_res_hba2.target, preprocess=True)
+# print(result_blind)
+
 
 ##############################  HbF  ##############################
 
@@ -132,4 +149,20 @@ gating_model = create_optimal_gating_model('HbF', 'RF', res_hbf.data, res_hbf.ta
 #  Optimal model (overall)  #
 #############################
 optimal_model_hbf = create_optimal_moe_model('HbF', None, cv_res_hbf.data, cv_res_hbf.target, blind_res_hbf.data, blind_res_hbf.target, cv_res_hbf_labels, gating_model, (q_lower/100, q_upper/100), k=5, preprocess=True, verbose=True)
+
+################
+#  Save model  #
+################
+# dump_moe_model_to_file(optimal_model_hbf, 'HbF')
+# dump_moe_model_to_file(optimal_model_hbf, 'HbF', without_data=True)
+
+################
+#  Load model  #
+################
+optimal_model_hbf_loaded = load_moe_model_from_file('HbF')
+result_blind = optimal_model_hbf_loaded.predict_blind_without_cv(blind_res_hbf.data, blind_res_hbf.target, preprocess=True)
+print(result_blind)
+# optimal_model_hbf_loaded_wo_data = load_moe_model_from_file('HbF', without_data=True)
+# result_blind = optimal_model_hbf_loaded_wo_data.predict_blind_without_cv(blind_res_hbf.data, blind_res_hbf.target, preprocess=True)
+# print(result_blind)
 
