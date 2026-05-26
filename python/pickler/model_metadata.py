@@ -1,6 +1,7 @@
 from python.ml.moe_model import MOEModel
 from python.ml.gating_model import GatingModel
 from python.ml.affinity_classifier import AffinityClassifier
+from python.explanation.explainer import ExplainerMOEModel
 from copy import deepcopy
 import numpy as np
 
@@ -118,5 +119,25 @@ class AffinityClassifierModelMetadata:
         model.trained = self.trained
         model.centroids = deepcopy(self.centroids)
         model.classes = deepcopy(self.classes)
+        return model
+
+
+class ExplainerMOEModelMetadata:
+    def __init__(self, model: ExplainerMOEModel, without_data: bool = False) -> None:
+        # self.background_model = model
+        self.preprocess = model.preprocess
+        # self.explainer = None
+        self.fitted = model.fitted
+        # if without_data:
+        #     self.background = np.ones(model.background.shape)
+        # else:
+        #     self.background = None
+
+    def get_model(self, background_model: MOEModel) -> ExplainerMOEModel:
+        model = ExplainerMOEModel(
+            deepcopy(background_model),
+            self.preprocess
+        )
+        model.fitted = self.fitted
         return model
 

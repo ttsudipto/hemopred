@@ -4,18 +4,22 @@ from python.ml.gating_model import GatingModel
 from python.ml.moe_model import MOEModel
 from python.ml.affinity_classifier import AffinityClassifier
 from python.explanation.explainer import ExplainerMOEModel
-from .model_metadata import GatingModelMetadata, MOEModelMetadata, AffinityClassifierModelMetadata
+from .model_metadata import GatingModelMetadata, MOEModelMetadata, AffinityClassifierModelMetadata, ExplainerMOEModelMetadata
 import pickle
 
 gating_hba2_path_prefix = 'output/models/gating/hba2/'
 gating_hbf_path_prefix = 'output/models/gating/hbf/'
 moe_hba2_path_prefix = 'output/models/moe/hba2/'
 moe_hbf_path_prefix = 'output/models/moe/hbf/'
+moe_explainer_hba2_path_prefix = 'output/models/moe_explainer/hba2/'
+moe_explainer_hbf_path_prefix = 'output/models/moe_explainer/hbf/'
 
 gating_hba2_wo_data_path_prefix = 'output/models_wo_data/gating/hba2/'
 gating_hbf_wo_data_path_prefix = 'output/models_wo_data/gating/hbf/'
 moe_hba2_wo_data_path_prefix = 'output/models_wo_data/moe/hba2/'
 moe_hbf_wo_data_path_prefix = 'output/models_wo_data/moe/hbf/'
+moe_explainer_hba2_wo_data_path_prefix = 'output/models_wo_data/moe_explainer/hba2/'
+moe_explainer_hbf_wo_data_path_prefix = 'output/models_wo_data/moe_explainer/hbf/'
 
 ac_path_prefix = 'output/models/affinity_classifier/'
 
@@ -79,6 +83,33 @@ def dump_moe_model_to_file(model: MOEModel, target_type: str, without_data: bool
         # sys.setrecursionlimit(old_rec_limit)
         md = MOEModelMetadata(model, without_data=without_data)
         metadata_file = open(path_prefix + 'moe_' + target_type.lower() + '_metadata.pkl', 'wb')
+        pickle.dump(md, metadata_file)
+        metadata_file.close()
+        return
+    raise ValueError('Error !!! Model not trained ...')
+
+
+def dump_moe_explainer_model_to_file(model: ExplainerMOEModel, target_type: str) -> None:
+    if model.is_fitted():
+        if target_type == 'HbA2':
+            path_prefix = moe_explainer_hba2_path_prefix
+        elif target_type == 'HbF':
+            path_prefix = moe_explainer_hbf_path_prefix
+        else:
+            raise ValueError('Error !!! Invalid target_type. Correct values = {HbA2, HbF} ... ')
+        if not Path(path_prefix).exists():
+            Path(path_prefix).mkdir(parents=True)
+        # old_rec_limit = sys.getrecursionlimit()
+        # sys.setrecursionlimit(0x1000)
+        # dump_gating_model_to_file(model.gating_model, target_type, without_data=without_data)
+        dump(model.explainer, path_prefix + 'moe_explainer_' + target_type.lower() + '_explainer.joblib')
+        # if model.data_preprocessor is not None:
+        #     dump(model.data_preprocessor, path_prefix + 'moe_' + target_type.lower() + '_data_preprocessor.joblib')
+        # if model.target_preprocessor is not None:
+        #     dump(model.target_preprocessor, path_prefix + 'moe_' + target_type.lower() + '_target_preprocessor.joblib')
+        # sys.setrecursionlimit(old_rec_limit)
+        md = ExplainerMOEModelMetadata(model)
+        metadata_file = open(path_prefix + 'moe_explainer_' + target_type.lower() + '_metadata.pkl', 'wb')
         pickle.dump(md, metadata_file)
         metadata_file.close()
         return
@@ -155,6 +186,24 @@ def load_moe_model_from_file(target_type: str, without_data: bool = False) -> MO
         model.target_preprocessor = load(path_prefix + 'moe_' + target_type.lower() + '_target_preprocessor.joblib')  # load target_preprocessor
     finally:
         pass
+    return model
+
+
+def load_moe_explainer_model_from_file(target_type: str, without_data: bool = False) -> ExplainerMOEModel:
+    if target_type == 'HbA2':
+        path_prefix = moe_explainer_hba2_path_prefix
+    elif target_type == 'HbF':
+        path_prefix = moe_explainer_hbf_path_prefix
+    else:
+        raise ValueError('Error !!! Invalid target_type. Correct values = {HbA2, HbF} ... ')
+    background_model = load_moe_model_from_file(target_type, without_data=without_data)  # load gating_model
+    metadata_file = open(path_prefix + 'moe_explainer_' + target_type.lower() + '_metadata.pkl', 'rb') # load metadata
+    md = pickle.load(metadata_file, encoding='latin1')
+    metadata_file.close()
+    model = md.get_model(background_model)  # `model` without explainer
+    model.explainer = load(path_prefix + 'moe_explainer_' + target_type.lower() + '_explainer.joblib')  # load explainer
+    # model.total_mid_expert = load(path_prefix + 'moe_' + target_type.lower() + '_total_mid_expert.joblib')  # load total_mid_expert
+    # model.total_lq_expert = load(path_prefix + 'moe_' + target_type.lower() + '_total_lq_expert.joblib')  # load total_lq_expert
     return model
 
 

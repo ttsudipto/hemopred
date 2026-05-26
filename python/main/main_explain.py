@@ -2,6 +2,7 @@ from ..io.resource import read_data
 from ..ml.ml_utils import split_cv_blind_data, get_quantiles, get_cluster_labels
 from ..ml.optimal import create_optimal_gating_model, create_optimal_moe_model
 from ..explanation.explainer import ExplainerMOEModel
+from ..pickler.pickler import dump_moe_explainer_model_to_file, load_moe_explainer_model_from_file
 import matplotlib
 import pickle
 
@@ -60,6 +61,24 @@ hba2_explainer.plot_shap_values(shap_values_hba2, plot_type='bar')
 friendly_labels_hba2 = list(map(friendly_label_name_map.get, res_hba2.target_labels))
 hba2_explainer.plot_shap_values(shap_values_hba2, plot_type='bar', labels=friendly_labels_hba2, plot_cohort=True)
 
+####################
+#  Save Explainer  #
+####################
+
+# dump_moe_explainer_model_to_file(hba2_explainer, 'HbA2')
+
+####################
+#  Load Explainer  #
+####################
+
+# hba2_explainer_loaded = load_moe_explainer_model_from_file('HbA2')
+# shap_values_hba2_loaded = hba2_explainer_loaded.explain(res_hba2.data[:5])
+# print(shap_values_hba2_loaded.values)
+
+# hba2_explainer_loaded_wo_data = load_moe_explainer_model_from_file('HbA2', without_data=True)
+# shap_values_hba2_loaded_wo_data = hba2_explainer_loaded_wo_data.explain(res_hba2.data[:5])
+# print(shap_values_hba2_loaded_wo_data.values)
+
 
 ##############################  HbF  ##############################
 
@@ -101,3 +120,20 @@ hbf_explainer.plot_shap_values(shap_values_hbf, plot_type='bar')
 friendly_labels_hbf = list(map(friendly_label_name_map.get, res_hbf.target_labels))
 hbf_explainer.plot_shap_values(shap_values_hbf, plot_type='bar', labels=friendly_labels_hbf, plot_cohort=True)
 
+####################
+#  Save Explainer  #
+####################
+
+# dump_moe_explainer_model_to_file(hbf_explainer, 'HbF')
+
+####################
+#  Load Explainer  #
+####################
+
+# hbf_explainer_loaded = load_moe_explainer_model_from_file('HbF')
+# shap_values_hbf_loaded = hbf_explainer_loaded.explain(res_hbf.data[:5])
+# print(shap_values_hbf_loaded.values)
+
+# hbf_explainer_loaded_wo_data = load_moe_explainer_model_from_file('HbF', without_data=True)
+# shap_values_hbf_loaded_wo_data = hbf_explainer_loaded_wo_data.explain(res_hbf.data[:5])
+# print(shap_values_hbf_loaded_wo_data.values)
