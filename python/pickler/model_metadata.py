@@ -1,5 +1,6 @@
 from python.ml.moe_model import MOEModel
 from python.ml.gating_model import GatingModel
+from python.ml.affinity_classifier import AffinityClassifier
 from copy import deepcopy
 import numpy as np
 
@@ -92,5 +93,30 @@ class MOEModelMetadata:
         model.train_indices = deepcopy(self.train_indices)
         model.test_indices = deepcopy(self.test_indices)
         model.clusters = deepcopy(self.clusters)
+        return model
+
+
+class AffinityClassifierModelMetadata:
+    def __init__(self, model: AffinityClassifier) -> None:
+        self.distance_metric = model.distance_metric
+        self.affinity_method = model.affinity_method
+        self.preprocess = model.preprocess
+        self.feature_names = model.feature_names
+        self.trained = model.trained
+        self.centroids = model.centroids
+        self.classes = model.classes
+        # self.data_preprocessor = None
+
+    def get_model(self) -> AffinityClassifier:
+        model = AffinityClassifier(
+            self.distance_metric,
+            self.affinity_method,
+            self.preprocess
+        )
+        model.feature_names = deepcopy(self.feature_names)
+        # print(self.trained)
+        model.trained = self.trained
+        model.centroids = deepcopy(self.centroids)
+        model.classes = deepcopy(self.classes)
         return model
 

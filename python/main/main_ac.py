@@ -111,3 +111,29 @@ print(
 # ConfusionMatrixDisplay(cm, display_labels=('Normal', 'Disease')).plot(cmap='Purples', colorbar=False)
 # matplotlib.pyplot.show()
 
+##################
+#   Save model   #
+##################
+# dump_affinity_classifier(ac_model)
+
+##################
+#   Load model   #
+##################
+# ac_model_loaded = load_affinity_classifier_from_file()
+# b_distances = ac_model_loaded.predict_distance(b_data)
+# b_affinity_confidences = ac_model_loaded.predict_affinity_confidence(b_data)
+# b_proba = ac_model_loaded.predict_proba(b_data)
+# b_pred = ac_model_loaded.predict(b_data)
+
+#######################
+#  Loaded model performance  #
+#######################
+# cm = confusion_matrix(b_target, b_pred)
+# print(classification_report(b_target, b_pred))
+# print(log_loss(b_target, b_proba))
+# print(top_k_accuracy_score(b_target, b_proba, k=3))
+# print(top_k_accuracy_score(b_target, b_proba, k=2))
+# print(top_k_accuracy_score(b_target, b_proba, k=1))
+# ConfusionMatrixDisplay(cm, display_labels=np.unique(target)).plot(cmap='Purples', xticks_rotation=20.0, colorbar=False)
+# matplotlib.pyplot.show()
+

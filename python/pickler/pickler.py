@@ -2,7 +2,9 @@ from joblib import dump, load
 from pathlib import Path
 from python.ml.gating_model import GatingModel
 from python.ml.moe_model import MOEModel
-from .model_metadata import GatingModelMetadata, MOEModelMetadata
+from python.ml.affinity_classifier import AffinityClassifier
+from python.explanation.explainer import ExplainerMOEModel
+from .model_metadata import GatingModelMetadata, MOEModelMetadata, AffinityClassifierModelMetadata
 import pickle
 
 gating_hba2_path_prefix = 'output/models/gating/hba2/'
@@ -14,6 +16,8 @@ gating_hba2_wo_data_path_prefix = 'output/models_wo_data/gating/hba2/'
 gating_hbf_wo_data_path_prefix = 'output/models_wo_data/gating/hbf/'
 moe_hba2_wo_data_path_prefix = 'output/models_wo_data/moe/hba2/'
 moe_hbf_wo_data_path_prefix = 'output/models_wo_data/moe/hbf/'
+
+ac_path_prefix = 'output/models/affinity_classifier/'
 
 
 def dump_gating_model_to_file(model: GatingModel, target_type: str, without_data: bool = False) -> None:
@@ -81,6 +85,25 @@ def dump_moe_model_to_file(model: MOEModel, target_type: str, without_data: bool
     raise ValueError('Error !!! Model not trained ...')
 
 
+def dump_affinity_classifier(model: AffinityClassifier) -> None:
+    print(model.is_trained())
+    print(model.preprocess)
+    if model.is_trained():
+        if not Path(ac_path_prefix).exists():
+            Path(ac_path_prefix).mkdir(parents=True)
+        # old_rec_limit = sys.getrecursionlimit()
+        # sys.setrecursionlimit(0x1000)
+        if model.preprocess:
+            dump(model.data_preprocessor, ac_path_prefix + 'ac_data_preprocessor.joblib')
+        # sys.setrecursionlimit(old_rec_limit)
+        md = AffinityClassifierModelMetadata(model)
+        metadata_file = open(ac_path_prefix + 'affinity_classifier_metadata.pkl', 'wb')
+        pickle.dump(md, metadata_file)
+        metadata_file.close()
+        return
+    raise ValueError('Error !!! Model not trained ...')
+
+
 def load_gating_model_from_file(target_type: str, without_data: bool = False) -> GatingModel:
     if target_type == 'HbA2':
         if without_data:
@@ -131,6 +154,18 @@ def load_moe_model_from_file(target_type: str, without_data: bool = False) -> MO
         model.data_preprocessor = load(path_prefix + 'moe_' + target_type.lower() + '_data_preprocessor.joblib')  # load data_preprocessor
         model.target_preprocessor = load(path_prefix + 'moe_' + target_type.lower() + '_target_preprocessor.joblib')  # load target_preprocessor
     finally:
+        pass
+    return model
+
+
+def load_affinity_classifier_from_file() -> AffinityClassifier:
+    metadata_file = open(ac_path_prefix + 'affinity_classifier_metadata.pkl', 'rb')  # load metadata
+    md = pickle.load(metadata_file, encoding='latin1')
+    metadata_file.close()
+    model = md.get_model()  # `model` without estimators
+    try:
+        model.data_preprocessor = load(ac_path_prefix + 'ac_data_preprocessor.joblib')  # load data_preprocessor
+    except:
         pass
     return model
 
