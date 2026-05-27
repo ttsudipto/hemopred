@@ -1,5 +1,6 @@
 from ..io.resource import read_data
 from ..ml.affinity_classifier import AffinityClassifier
+from ..pickler.pickler import dump_affinity_classifier, load_affinity_classifier_from_file
 from sklearn.metrics import classification_report, log_loss, top_k_accuracy_score, recall_score, f1_score, \
     balanced_accuracy_score, accuracy_score, confusion_matrix, ConfusionMatrixDisplay
 from matplotlib.pyplot import xticks
