@@ -133,7 +133,7 @@
                         <th>MCV</th>
                         <th>MCH</th>
                         <th>MCHC</th>
-                        <th>RDW</th>
+                        <th>RDW-CV</th>
                         <th>WBC count</th>
                         <th>PLT count</th>
                     </tr>

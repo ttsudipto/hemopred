@@ -47,43 +47,43 @@ $errMsg = "";
 
     function checkRanges() {
         global $errMsg;
-        if(!is_numeric($_POST["age"]) or intval($_POST["age"])<1) {
+        if(!is_numeric($_POST["age"]) or intval($_POST["age"])<18 or intval($_POST["age"])>90) {
             $errMsg = "Invalid Age value";
             return false;
         }
-        if(!is_numeric($_POST["wbc"]) or floatval($_POST["wbc"])<0.1) {
+        if(!is_numeric($_POST["wbc"]) or floatval($_POST["wbc"])<0.2 or floatval($_POST["wbc"])>150.0) {
             $errMsg = "Invalid WBC value";
             return false;
         }
-        if(!is_numeric($_POST["rbc"]) or floatval($_POST["rbc"])<0.01) {
+        if(!is_numeric($_POST["rbc"]) or floatval($_POST["rbc"])<0.50 or floatval($_POST["rbc"])>9.00) {
             $errMsg = "Invalid RBC value";
             return false;
         }
-        if(!is_numeric($_POST["hb"]) or floatval($_POST["hb"])<0.1) {
+        if(!is_numeric($_POST["hb"]) or floatval($_POST["hb"])<1.0 or floatval($_POST["hb"])>22.0) {
             $errMsg = "Invalid Hb value";
             return false;
         }
-        if(!is_numeric($_POST["hct"]) or floatval($_POST["hct"])<0.1 or floatval($_POST["hct"])>100) {
+        if(!is_numeric($_POST["hct"]) or floatval($_POST["hct"])<10.0 or floatval($_POST["hct"])>70.0) {
             $errMsg = "Invalid HCT value";
             return false;
         }
-        if(!is_numeric($_POST["mcv"]) or floatval($_POST["mcv"])<0.1) {
+        if(!is_numeric($_POST["mcv"]) or floatval($_POST["mcv"])<35.0 or floatval($_POST["mcv"])>170.0) {
             $errMsg = "Invalid MCV value";
             return false;
         }
-        if(!is_numeric($_POST["mch"]) or floatval($_POST["mch"])<0.1) {
+        if(!is_numeric($_POST["mch"]) or floatval($_POST["mch"])<10.0 or floatval($_POST["mch"])>50.0) {
             $errMsg = "Invalid MCH value";
             return false;
         }
-        if(!is_numeric($_POST["mchc"]) or floatval($_POST["mchc"])<0.1) {
+        if(!is_numeric($_POST["mchc"]) or floatval($_POST["mchc"])<20.0 or floatval($_POST["mchc"])>50.0) {
             $errMsg = "Invalid MCHC value";
             return false;
         }
-        if(!is_numeric($_POST["rdw"]) or floatval($_POST["rdw"])<0.1 or floatval($_POST["hct"])>100) {
-            $errMsg = "Invalid RDW value";
+        if(!is_numeric($_POST["rdw"]) or floatval($_POST["rdw"])<10.0 or floatval($_POST["rdw"])>50.0) {
+            $errMsg = "Invalid RDW-CV value";
             return false;
         }
-        if(!is_numeric($_POST["plt"]) or floatval($_POST["plt"])<1) {
+        if(!is_numeric($_POST["plt"]) or intval($_POST["plt"])<1 or intval($_POST["plt"])>1500) {
             $errMsg = "Invalid PLT value";
             return false;
         }

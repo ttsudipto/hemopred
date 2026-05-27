@@ -75,7 +75,7 @@
                         </tr>
                         <tr>
                             <th style="width:60%; text-align: left;">Hemoglobin - Hb (g/dL)</th>
-                            <td><input type="number" class="full" id="v4" name="hb" min="1.0" max="20.0" step="0.1" value="" placeholder="Enter Hb" required /></td>
+                            <td><input type="number" class="full" id="v4" name="hb" min="1.0" max="22.0" step="0.1" value="" placeholder="Enter Hb" required /></td>
                         </tr>
                         <tr>
                             <th style="width:60%; text-align: left;">Hematocrit - HCT (%)</th>
@@ -87,7 +87,7 @@
                         </tr>
                         <tr>
                             <th style="width:60%; text-align: left;">Mean Corpuscular Volume - MCV (fL)</th>
-                            <td><input type="number" class="full" id="v6" name="mcv" min="50.0" max="150.0" step="0.1" value="" placeholder="Enter MCV" required /></td>
+                            <td><input type="number" class="full" id="v6" name="mcv" min="35.0" max="170.0" step="0.1" value="" placeholder="Enter MCV" required /></td>
                         </tr>
                         <tr>
                             <th style="width:60%; text-align: left;">Mean Corpuscular Hemoglobin - MCH (pg)</th>
@@ -98,12 +98,12 @@
                             <td><input type="number" class="full" id="v8" name="mchc" min="20.0" max="50.0" step="0.1" value="" placeholder="Enter MCHC" required /></td>
                         </tr>
                         <tr>
-                            <th style="width:60%; text-align: left;">Red cell Distribution Width - RDW (%)</th>
+                            <th style="width:60%; text-align: left;">Red cell Distribution Width - Coefficient of Variation - RDW-CV (%)</th>
                             <td><input type="number" class="full" id="v9" name="rdw" min="10.0" max="50.0" step="0.1" value="" placeholder="Enter RDW-CV" required /></td>
                         </tr>
                         <tr>
                             <th style="width:60%; text-align: left;">White Blood Cell - WBC count (&times; 10<sup>9</sup> /L)</th>
-                            <td><input type="number" class="full" id="v2" name="wbc" min="0.2" max="70.0" step="0.1" value="" placeholder="Enter WBC count" required /></td>
+                            <td><input type="number" class="full" id="v2" name="wbc" min="0.1" max="150.0" step="0.1" value="" placeholder="Enter WBC count" required /></td>
                         </tr>
                         <tr>
                             <th style="width:60%; text-align: left;">Platelet count (&times; 10<sup>9</sup> /L)</th>
