@@ -1,10 +1,10 @@
 from joblib import dump, load
 from pathlib import Path
-from python.ml.gating_model import GatingModel
-from python.ml.moe_model import MOEModel
-from python.ml.affinity_classifier import AffinityClassifier
-from python.explanation.explainer import ExplainerMOEModel
-from .model_metadata import GatingModelMetadata, MOEModelMetadata, AffinityClassifierModelMetadata, ExplainerMOEModelMetadata
+from ..ml.gating_model import GatingModel
+from ..ml.moe_model import MOEModel
+from ..ml.affinity_classifier import AffinityClassifier
+from ..explanation.explainer import ExplainerMOEModel
+from ..ml.model_metadata import GatingModelMetadata, MOEModelMetadata, AffinityClassifierModelMetadata, ExplainerMOEModelMetadata
 import pickle
 
 gating_hba2_path_prefix = 'output/models/gating/hba2/'

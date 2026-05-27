@@ -1,7 +1,7 @@
-from python.ml.moe_model import MOEModel
-from python.ml.gating_model import GatingModel
-from python.ml.affinity_classifier import AffinityClassifier
-from python.explanation.explainer import ExplainerMOEModel
+from .moe_model import MOEModel
+from .gating_model import GatingModel
+from .affinity_classifier import AffinityClassifier
+from ..explanation.explainer import ExplainerMOEModel
 from copy import deepcopy
 import numpy as np
 
