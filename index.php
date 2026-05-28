@@ -109,8 +109,12 @@
                             <th style="width:60%; text-align: left;">Platelet count (&times; 10<sup>9</sup> /L)</th>
                             <td><input type="number" class="full" id="v10" name="plt" min="1.0" max="1500" step="1" value="" placeholder="Enter Platelet count" required /></td>
                         </tr>
+                        <tr>
+                            <td class="subheading" style="width:60%; text-align: left;">Show feature contributions</th>
+                            <td><input type="checkbox" class="full" id="v11" name="shap[]" value="shap" checked /></td>
+                        </tr>
                     </table>
-                    <p style="margin:10px 0 5px 0; padding:0;"><i>N.B. - All fields are mandatory.</i></p>
+                    <p style="margin:10px 0 5px 0; padding:0;"><i>N.B. - All numerical fields are mandatory.</i></p>
                     <input type = "hidden" id = "query" name = "query" value = "0" />
 
 <!--                     <br/> -->

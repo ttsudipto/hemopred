@@ -122,14 +122,19 @@ table.summary tr:nth-child(even){
 }
 table.summary td{
     text-align : center;
-    padding: 10px 0 10px 0;
+    padding: 8px 0 8px 0;
     border : 2px white solid; /*#392d37*/
+}
+table.summary td.subheading{
+    background-color: #404040;
+    color: #ffffff;
+    padding: 8px 10px 8px 10px;
 }
 table.summary th{
 /*     background-color : #004d99; */
     background-color : #993300;
     color : #ffffff;
-    padding : 10px 10px 10px 10px;
+    padding : 8px 10px 8px 10px;
     border : 2px solid white; /*#392d37*/
     text-align: center;
     font-weight : bold;
@@ -156,12 +161,10 @@ table.details td{
     text-align : center;
     padding: 5px 0 5px 0;
     border : 2px white solid;
-/*     font-size: 1.3em; */
 }
 table.details td.subheading{
     background-color: #404040;
     color: #ffffff;
-/*     font-size: 1.3em; */
 }
 table.details th{
     background-color : #993300;
@@ -170,7 +173,6 @@ table.details th{
     border : 2px solid white;
     text-align: center;
     font-weight : bold;
-/*     font-size: 1.3em; */
 }
 .details_big_font{
     font-size: 1.3em;
@@ -262,6 +264,12 @@ input[type=text]{
     padding : 2px 10px 2px 10px;
 /*     font-weight : bold; */
     box-shadow: 0px 3px 10px grey;
+}
+input[type=checkbox]{
+    padding : 2px 10px 2px 10px;
+    box-shadow: 0px 3px 10px grey;
+    height: 25px;
+    width: 25px;
 }
 input[type=email]{
     background-color : #f2f2f2;

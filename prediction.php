@@ -53,6 +53,13 @@
     $arg_json = json_encode($params);
     // echo $arg_json;
 
+    $do_shap = array_key_exists("shap", $_POST) and count($_POST["shap"]) > 0 and $_POST["shap"][0] === "shap";
+    // echo $do_shap;
+    if ($do_shap)
+        $op_num = array("pred" => "a.", "shap" => "b.", "scatter" => "c.", "labels" => "d.");
+    else
+        $op_num = array("pred" => "a.", "shap" => "", "scatter" => "b.", "labels" => "c.");
+
     // $command = "venv3.7/bin/python3 -m python.driver '".$arg_json."' 2>&1";
     $command = ".venv/bin/python3 -m python.webapp.driver '".$arg_json."' 2>&1";
     // echo "<pre>".$command."</pre>\n";
@@ -169,7 +176,7 @@
             <center><h2 style="margin-top:10px; margin-bottom:5px;">Outputs</h2></center>
 
             <h4 class="output_heading">
-                a. HbA2 and HbF values predicted by regression using Mixture of Experts (MoE) model.
+                <?php echo $op_num["pred"]; ?> HbA2 and HbF values predicted by regression using Mixture of Experts (MoE) model.
             </h4>
             <div id="regression_output_div" class="details">
                 <table class="details details_big_font">
@@ -194,28 +201,34 @@
                 </table>
             </div>
 
-            <h4 class="output_heading">
-                b. Feature contributions for HbA2 and HbF predictions, computed by SHapley Additive exPlanation (SHAP).
-            </h4>
-            <div id="shap_gallery_div">
-                <div id="shap_hba2_div">
-                    <center><img style="height:300px;" src="resource/loading.svg" /></center>
-                </div>
-                <div id="shap_hbf_div">
-                    <center><img style="height:300px;" src="resource/loading.svg" /></center>
-                </div>
-            </div>
-            <div style="clear:both;"></div>
+            <?php
+                if ($do_shap) {
+            ?>
+                    <h4 class="output_heading">
+                        <?php echo $op_num["shap"]; ?> Feature contributions for HbA2 and HbF predictions, computed by SHapley Additive exPlanation (SHAP).
+                    </h4>
+                    <div id="shap_gallery_div">
+                        <div id="shap_hba2_div">
+                            <center><img style="height:300px;" src="resource/loading.svg" /></center>
+                        </div>
+                        <div id="shap_hbf_div">
+                            <center><img style="height:300px;" src="resource/loading.svg" /></center>
+                        </div>
+                    </div>
+                    <div style="clear:both;"></div>
+            <?php
+                }
+            ?>
 
             <h4 class="output_heading">
-                c. Visualization of the predicted HbA2 and HbF values.
+                <?php echo $op_num["scatter"]; ?> Visualization of the predicted HbA2 and HbF values.
             </h4>
             <div id="plot_div">
                 <center><img style="height:300px;" src="resource/loading.svg" /></center>
             </div>
 
             <h4 class="output_heading">
-                d. Class prediction based on affinity score computed using Nearest Centroid model.
+                <?php echo $op_num["labels"]; ?> Class prediction based on affinity score computed using Nearest Centroid model.
             </h4>
             <div id="affinity_output_div" class="details">
                 <table class="details details_big_font">
@@ -255,11 +268,12 @@
     </body>
     <?php echo "<script>plot_data('plot_div', ".round(floatval($result->HbA2), 3).", ".round(floatval($result->HbF), 3).");</script>"; ?>
     <?php
-        echo
-            "<script>
-                plot_shap('shap_hba2_div', '".$arg_json."', "."'HbA2');
-                plot_shap('shap_hbf_div', '".$arg_json."', "."'HbF');
-            </script>";
+        if ($do_shap)
+            echo
+                "<script>
+                    plot_shap('shap_hba2_div', '".$arg_json."', "."'HbA2');
+                    plot_shap('shap_hbf_div', '".$arg_json."', "."'HbF');
+                </script>";
     ?>
     <script>
          window.onresize = function() {
