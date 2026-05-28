@@ -2,6 +2,7 @@ from .moe_model import MOEModel
 from .gating_model import GatingModel
 from .affinity_classifier import AffinityClassifier
 from ..explanation.explainer import ExplainerMOEModel
+from ..uncertainty.mapie import MAPIEModel, MOEModelWrapper
 from copy import deepcopy
 import numpy as np
 
@@ -139,5 +140,27 @@ class ExplainerMOEModelMetadata:
             self.preprocess
         )
         model.fitted = self.fitted
+        return model
+
+class MAPIEModelMetadata:
+    def __init__(self, model: MAPIEModel, without_data: bool = False) -> None:
+        self.without_data = without_data
+        # self.estimator = model.estimator
+        self.trained = model.trained
+        # self.uncertainty_estimator = None
+        if self.without_data:
+            self.data = np.ones(model.data.shape)
+            self.target = np.ones(model.target.shape)
+        else:
+            self.data = model.data
+            self.target = model.target
+
+    def get_model(self, regressor: MOEModelWrapper) -> MAPIEModel:
+        model = MAPIEModel(
+            deepcopy(regressor),
+            self.data,
+            self.target
+        )
+        model.trained = self.trained
         return model
 

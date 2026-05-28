@@ -4,7 +4,12 @@ from ..ml.gating_model import GatingModel
 from ..ml.moe_model import MOEModel
 from ..ml.affinity_classifier import AffinityClassifier
 from ..explanation.explainer import ExplainerMOEModel
-from ..ml.model_metadata import GatingModelMetadata, MOEModelMetadata, AffinityClassifierModelMetadata, ExplainerMOEModelMetadata
+from ..uncertainty.mapie import MAPIEModel
+from ..ml.model_metadata import GatingModelMetadata
+from ..ml.model_metadata import MOEModelMetadata
+from ..ml.model_metadata import AffinityClassifierModelMetadata
+from ..ml.model_metadata import ExplainerMOEModelMetadata
+from ..ml.model_metadata import MAPIEModelMetadata
 import pickle
 
 gating_hba2_path_prefix = 'output/models/gating/hba2/'
@@ -13,6 +18,8 @@ moe_hba2_path_prefix = 'output/models/moe/hba2/'
 moe_hbf_path_prefix = 'output/models/moe/hbf/'
 moe_explainer_hba2_path_prefix = 'output/models/moe_explainer/hba2/'
 moe_explainer_hbf_path_prefix = 'output/models/moe_explainer/hbf/'
+mapie_hba2_path_prefix = 'output/models/mapie/hba2/'
+mapie_hbf_path_prefix = 'output/models/mapie/hbf/'
 
 gating_hba2_wo_data_path_prefix = 'output/models_wo_data/gating/hba2/'
 gating_hbf_wo_data_path_prefix = 'output/models_wo_data/gating/hbf/'
@@ -20,6 +27,8 @@ moe_hba2_wo_data_path_prefix = 'output/models_wo_data/moe/hba2/'
 moe_hbf_wo_data_path_prefix = 'output/models_wo_data/moe/hbf/'
 moe_explainer_hba2_wo_data_path_prefix = 'output/models_wo_data/moe_explainer/hba2/'
 moe_explainer_hbf_wo_data_path_prefix = 'output/models_wo_data/moe_explainer/hbf/'
+mapie_hba2_wo_data_path_prefix = 'output/models_wo_data/mapie/hba2/'
+mapie_hbf_wo_data_path_prefix = 'output/models_wo_data/mapie/hbf/'
 
 ac_path_prefix = 'output/models/affinity_classifier/'
 
@@ -135,6 +144,34 @@ def dump_affinity_classifier(model: AffinityClassifier) -> None:
     raise ValueError('Error !!! Model not trained ...')
 
 
+def dump_mapie_model_to_file(model: MAPIEModel, target_type: str, without_data: bool = False) -> None:
+    if model.is_trained():
+        if target_type == 'HbA2':
+            if without_data:
+                path_prefix = mapie_hba2_wo_data_path_prefix
+            else:
+                path_prefix = mapie_hba2_path_prefix
+        elif target_type == 'HbF':
+            if without_data:
+                path_prefix = mapie_hbf_wo_data_path_prefix
+            else:
+                path_prefix = mapie_hbf_path_prefix
+        else:
+            raise ValueError('Error !!! Invalid target_type. Correct values = {HbA2, HbF} ... ')
+        if not Path(path_prefix).exists():
+            Path(path_prefix).mkdir(parents=True)
+        # old_rec_limit = sys.getrecursionlimit()
+        # sys.setrecursionlimit(0x1000)
+        dump(model.uncertainty_estimator, path_prefix + 'mapie_' + target_type.lower() + '_uncertainty_estimator.joblib')
+        # sys.setrecursionlimit(old_rec_limit)
+        md = MAPIEModelMetadata(model, without_data=without_data)
+        metadata_file = open(path_prefix + 'mapie_' + target_type.lower() + '_metadata.pkl', 'wb')
+        pickle.dump(md, metadata_file)
+        metadata_file.close()
+        return
+    raise ValueError('Error !!! Model not trained ...')
+
+
 def load_gating_model_from_file(target_type: str, without_data: bool = False) -> GatingModel:
     if target_type == 'HbA2':
         if without_data:
@@ -216,5 +253,27 @@ def load_affinity_classifier_from_file() -> AffinityClassifier:
         model.data_preprocessor = load(ac_path_prefix + 'ac_data_preprocessor.joblib')  # load data_preprocessor
     except:
         pass
+    return model
+
+
+def load_mapie_model_from_file(target_type: str, without_data: bool = False) -> MAPIEModel:
+    if target_type == 'HbA2':
+        if without_data:
+            path_prefix = mapie_hba2_wo_data_path_prefix
+        else:
+            path_prefix = mapie_hba2_path_prefix
+    elif target_type == 'HbF':
+        if without_data:
+            path_prefix = mapie_hbf_wo_data_path_prefix
+        else:
+            path_prefix = mapie_hbf_path_prefix
+    else:
+        raise ValueError('Error !!! Invalid target_type. Correct values = {HbA2, HbF} ... ')
+    regressor = load_moe_model_from_file(target_type, without_data=without_data)  # load MoE model
+    metadata_file = open(path_prefix + 'mapie_' + target_type.lower() + '_metadata.pkl', 'rb')  # load metadata
+    md = pickle.load(metadata_file, encoding='latin1')
+    metadata_file.close()
+    model = md.get_model(regressor)  # `model` without uncertainty_estimator
+    model.uncertainty_estimator = load(path_prefix + 'mapie_' + target_type.lower() + '_uncertainty_estimator.joblib')  # load uncertainty_estimator
     return model
 

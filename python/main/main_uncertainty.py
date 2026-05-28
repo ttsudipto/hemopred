@@ -4,6 +4,7 @@ from ..ml.optimal import create_optimal_gating_model, create_optimal_moe_model
 from ..pickler.pickler import load_moe_model_from_file
 from ..uncertainty.moe_wrapper import MOEModelWrapper
 from ..uncertainty.mapie import MAPIEModel
+from ..pickler.pickler import dump_mapie_model_to_file, load_mapie_model_from_file
 from mapie.metrics.regression import regression_coverage_score, regression_mean_width_score
 import numpy as np
 
@@ -33,9 +34,29 @@ y_pred = optimal_hba2_moe_model.predict_labels_blind_without_cv(res_hba2.data, p
 ###########
 #  MAPIE  #
 ###########
-optimal_hba2_moe_model_wrapper = MOEModelWrapper(optimal_hba2_moe_model, preprocess=True)
-mapie_hba2_model = MAPIEModel(optimal_hba2_moe_model_wrapper, blind_res_hba2.data, blind_res_hba2.target)
-mapie_hba2_model.learn({'confidence_level': 0.95, 'conformity_score': 'absolute'})
+# optimal_hba2_moe_model_wrapper = MOEModelWrapper(optimal_hba2_moe_model, preprocess=True)
+# mapie_hba2_model = MAPIEModel(optimal_hba2_moe_model_wrapper, blind_res_hba2.data, blind_res_hba2.target)
+# mapie_hba2_model.learn({'confidence_level': 0.95, 'conformity_score': 'absolute'})
+# y_pred_mapie, y_pis = mapie_hba2_model.predict(res_hba2.data)
+#
+# print('\t'.join(('Patient ID', 'Label', 'HbA2', 'Predicted HbA2', 'PI_low', 'PI_high')))
+# for i in range(res_hba2.data.shape[0]):
+#     print('\t'.join((res_hba2.patient_ids[i], res_hba2.target_labels[i], str(res_hba2.target[i]), str(y_pred[i]), str(y_pis[i][0][0]), str(y_pis[i][1][0]))))
+# print(regression_coverage_score(res_hba2.target, y_pis)[0])
+# print(regression_mean_width_score(y_pis))
+# print()
+
+################
+#  Save MAPIE  #
+################
+# dump_mapie_model_to_file(mapie_hba2_model, 'HbA2', without_data=False)
+# dump_mapie_model_to_file(mapie_hba2_model, 'HbA2', without_data=True)
+
+################
+#  Load MAPIE  #
+################
+# mapie_hba2_model = load_mapie_model_from_file('HbA2', without_data=False)
+mapie_hba2_model = load_mapie_model_from_file('HbA2', without_data=True)
 y_pred_mapie, y_pis = mapie_hba2_model.predict(res_hba2.data)
 
 print('\t'.join(('Patient ID', 'Label', 'HbA2', 'Predicted HbA2', 'PI_low', 'PI_high')))
@@ -68,9 +89,29 @@ y_pred = optimal_hbf_moe_model.predict_labels_blind_without_cv(res_hbf.data, pre
 ###########
 #  MAPIE  #
 ###########
-optimal_hbf_moe_model_wrapper = MOEModelWrapper(optimal_hbf_moe_model, preprocess=True)
-mapie_hbf_model = MAPIEModel(optimal_hbf_moe_model_wrapper, blind_res_hbf.data, blind_res_hbf.target)
-mapie_hbf_model.learn({'confidence_level': 0.95, 'conformity_score': 'absolute'})
+# optimal_hbf_moe_model_wrapper = MOEModelWrapper(optimal_hbf_moe_model, preprocess=True)
+# mapie_hbf_model = MAPIEModel(optimal_hbf_moe_model_wrapper, blind_res_hbf.data, blind_res_hbf.target)
+# mapie_hbf_model.learn({'confidence_level': 0.95, 'conformity_score': 'absolute'})
+# y_pred_mapie, y_pis = mapie_hbf_model.predict(res_hbf.data)
+#
+# print('\t'.join(('Patient ID', 'Label', 'HbF', 'Predicted HbF', 'PI_low', 'PI_high')))
+# for i in range(res_hbf.data.shape[0]):
+#     print('\t'.join((res_hbf.patient_ids[i], res_hbf.target_labels[i], str(res_hbf.target[i]), str(y_pred[i]), str(y_pis[i][0][0]), str(y_pis[i][1][0]))))
+# print(regression_coverage_score(res_hbf.target, y_pis)[0])
+# print(regression_mean_width_score(y_pis))
+# print()
+
+################
+#  Save MAPIE  #
+################
+# dump_mapie_model_to_file(mapie_hbf_model, 'HbF', without_data=False)
+# dump_mapie_model_to_file(mapie_hbf_model, 'HbF', without_data=True)
+
+################
+#  Load MAPIE  #
+################
+# mapie_hbf_model = load_mapie_model_from_file('HbF', without_data=False)
+mapie_hbf_model = load_mapie_model_from_file('HbF', without_data=True)
 y_pred_mapie, y_pis = mapie_hbf_model.predict(res_hbf.data)
 
 print('\t'.join(('Patient ID', 'Label', 'HbF', 'Predicted HbF', 'PI_low', 'PI_high')))
