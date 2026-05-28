@@ -138,30 +138,30 @@
                         <th>PLT count</th>
                     </tr>
                     <tr>
-                        <th>Unit</th>
-                        <td class="subheading">years</th>
-                        <td class="subheading">g/dL</td>
-                        <td class="subheading">%</td>
-                        <td class="subheading">&times; 10<sup>12</sup> /L</td>
-                        <td class="subheading">fL</td>
-                        <td class="subheading">pg</td>
-                        <td class="subheading">g/dL</td>
-                        <td class="subheading">%</td>
-                        <td class="subheading">&times; 10<sup>9</sup> /L</td>
-                        <td class="subheading">&times; 10<sup>9</sup> /L</td>
+                        <td class="subheading">Value</td>
+                        <td><b><?php echo $params["Age"]; ?></b></td>
+                        <td><b><?php echo $params["Hb"]; ?></b></td>
+                        <td><b><?php echo $params["HCT"]; ?></b></td>
+                        <td><b><?php echo $params["RBC"]; ?></b></td>
+                        <td><b><?php echo $params["MCV"]; ?></b></td>
+                        <td><b><?php echo $params["MCH"]; ?></b></td>
+                        <td><b><?php echo $params["MCHC"]; ?></b></td>
+                        <td><b><?php echo $params["RDW"]; ?></b></td>
+                        <td><b><?php echo $params["WBC"]; ?></b></td>
+                        <td><b><?php echo $params["PLT"]; ?></b></td>
                     </tr>
                     <tr>
-                        <th>Value</th>
-                        <td><?php echo $params["Age"]; ?></td>
-                        <td><?php echo $params["Hb"]; ?></td>
-                        <td><?php echo $params["HCT"]; ?></td>
-                        <td><?php echo $params["RBC"]; ?></td>
-                        <td><?php echo $params["MCV"]; ?></td>
-                        <td><?php echo $params["MCH"]; ?></td>
-                        <td><?php echo $params["MCHC"]; ?></td>
-                        <td><?php echo $params["RDW"]; ?></td>
-                        <td><?php echo $params["WBC"]; ?></td>
-                        <td><?php echo $params["PLT"]; ?></td>
+                        <td class="subheading">Unit</td>
+                        <td>years</th>
+                        <td>g/dL</td>
+                        <td>%</td>
+                        <td>&times; 10<sup>12</sup> /L</td>
+                        <td>fL</td>
+                        <td>pg</td>
+                        <td>g/dL</td>
+                        <td>%</td>
+                        <td>&times; 10<sup>9</sup> /L</td>
+                        <td>&times; 10<sup>9</sup> /L</td>
                     </tr>
                 </table>
             </div>
@@ -172,14 +172,24 @@
                 a. HbA2 and HbF values predicted by regression using Mixture of Experts (MoE) model.
             </h4>
             <div id="regression_output_div" class="details">
-                <table class="details">
+                <table class="details details_big_font">
                     <tr>
-                        <th style="width:50%;">Predicted Hemoglobin A2 - HbA2 (%)</th>
-                        <th style="width:50%;">Predicted Fetal Hemoglobin - HbF (%)</th>
+                        <th>Metric</th>
+                        <th>Predicted value</th>
+                        <th>Unit</th>
+                        <th>95% Confidence interval</th>
                     </tr>
                     <tr>
+                        <td class="subheading">Hemoglobin A2 - HbA2</td>
                         <td><b><?php echo number_format(round(floatval($result->HbA2), 3), 3, ".", ""); ?></b></td>
+                        <td>(%)</td>
+                        <td><b><?php echo number_format(round(floatval($result->PI_HbA2[0]), 3), 3, ".", "") . " - " . number_format(round(floatval($result->PI_HbA2[1]), 3), 3, ".", ""); ?></b></td>
+                    </tr>
+                    <tr>
+                        <td class="subheading">Fetal Hemoglobin - HbF</td>
                         <td><b><?php echo number_format(round(floatval($result->HbF), 3), 3, ".", ""); ?></b></td>
+                        <td>(%)</td>
+                        <td><b><?php echo number_format(round(floatval($result->PI_HbF[0]), 3), 3, ".", "") . " - " . number_format(round(floatval($result->PI_HbF[1]), 3), 3, ".", ""); ?></b></td>
                     </tr>
                 </table>
             </div>
@@ -208,7 +218,7 @@
                 d. Class prediction based on affinity score computed using Nearest Centroid model.
             </h4>
             <div id="affinity_output_div" class="details">
-                <table class="details">
+                <table class="details details_big_font">
                     <tr>
                         <th>Label</td>
                         <th>Distance from centroid</th>

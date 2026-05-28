@@ -156,10 +156,12 @@ table.details td{
     text-align : center;
     padding: 5px 0 5px 0;
     border : 2px white solid;
+/*     font-size: 1.3em; */
 }
 table.details td.subheading{
     background-color: #404040;
     color: #ffffff;
+/*     font-size: 1.3em; */
 }
 table.details th{
     background-color : #993300;
@@ -168,6 +170,10 @@ table.details th{
     border : 2px solid white;
     text-align: center;
     font-weight : bold;
+/*     font-size: 1.3em; */
+}
+.details_big_font{
+    font-size: 1.3em;
 }
 button{
     background-color : #993300;
