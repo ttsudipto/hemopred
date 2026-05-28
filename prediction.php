@@ -189,13 +189,13 @@
                     <tr>
                         <td class="subheading">Hemoglobin A2 - HbA2</td>
                         <td><b><?php echo number_format(round(floatval($result->HbA2), 3), 3, ".", ""); ?></b></td>
-                        <td>(%)</td>
+                        <td>%</td>
                         <td><b><?php echo number_format(round(floatval($result->PI_HbA2[0]), 3), 3, ".", "") . " - " . number_format(round(floatval($result->PI_HbA2[1]), 3), 3, ".", ""); ?></b></td>
                     </tr>
                     <tr>
                         <td class="subheading">Fetal Hemoglobin - HbF</td>
                         <td><b><?php echo number_format(round(floatval($result->HbF), 3), 3, ".", ""); ?></b></td>
-                        <td>(%)</td>
+                        <td>%</td>
                         <td><b><?php echo number_format(round(floatval($result->PI_HbF[0]), 3), 3, ".", "") . " - " . number_format(round(floatval($result->PI_HbF[1]), 3), 3, ".", ""); ?></b></td>
                     </tr>
                 </table>

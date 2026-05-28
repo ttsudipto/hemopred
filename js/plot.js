@@ -187,7 +187,7 @@ function make_scatter_plot(div_id, jsonData, pred_hba2, pred_hbf) {
         marker: {
             color: '#000000',
             symbol: 'circle',
-            size: 14
+            size: 18
         }
     }];
     for(var i=0; i<labels.length; ++i) {
@@ -214,7 +214,7 @@ function make_scatter_plot(div_id, jsonData, pred_hba2, pred_hbf) {
             marker: {
                 color: pt_colors[i],
                 symbol: 'square',
-                size: 10
+                size: 12
             }
         });
     }
