@@ -115,9 +115,9 @@ def print_gs_moe_output_row(param: List[Dict], result_cv: Tuple, result_blind: T
     print('\t'.join(
         (
             str(param),
-            str(round(mae, 3)), str(round(mse, 3)), str(round(rmse, 3)), str(round(pcc, 3)), str(round(r2score, 3)),
-            str(round(mae_blind, 3)), str(round(mse_blind, 3)), str(round(rmse_blind, 3)), str(round(pcc_blind, 3)), str(round(r2score_blind, 3)),
-            str(round(mae_blind_cv, 3)), str(round(mse_blind_cv, 3)), str(round(rmse_blind_cv, 3)), str(round(pcc_blind_cv, 3)), str(round(r2score_blind_cv, 3)),
+            str(round(mae, 4)), str(round(mse, 4)), str(round(rmse, 4)), str(round(pcc, 4)), str(round(r2score, 4)),
+            str(round(mae_blind, 4)), str(round(mse_blind, 4)), str(round(rmse_blind, 4)), str(round(pcc_blind, 4)), str(round(r2score_blind, 4)),
+            str(round(mae_blind_cv, 4)), str(round(mse_blind_cv, 4)), str(round(rmse_blind_cv, 4)), str(round(pcc_blind_cv, 4)), str(round(r2score_blind_cv, 4)),
         )
     ))
 
