@@ -1,12 +1,13 @@
 from typing import List, Dict, Tuple
 from .gating_model import GatingModel
-from .ml_utils import mean_fishers
+from .ml_utils import mean_fishers, get_quantiles, get_cluster_labels
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, root_mean_squared_error
 from scipy.stats import pearsonr
 from sklearn.utils import shuffle
 from sklearn.svm import SVR
+from sklearn.impute import KNNImputer
 from sklearn.ensemble import RandomForestRegressor as RFR
 from sklearn.ensemble import GradientBoostingRegressor as GBR
 from sklearn.ensemble import HistGradientBoostingRegressor as HGBR
@@ -34,23 +35,26 @@ class MOEModel:
             do_shuffle: bool = True
     ) -> None:
         self.lower_eid, self.mid_eid, self.upper_eid = e_id
+        self.imputer_id = 'KNN'
         self.n_folds = k
         if do_shuffle:
             self.data = shuffle(data, random_state=42)
             self.target = shuffle(target, random_state=42)
-            self.clusters = shuffle(clusters, random_state=42)
+            # self.clusters = shuffle(clusters, random_state=42)
         else:
             self.data = data
             self.target = target
-            self.clusters = clusters
+            # self.clusters = clusters
         self.feature_names = feature_names
         self.gating_model = gating_model
         self.lq, self.uq = quantiles
         self.trained_total = False
         self.trained_cv = False
+        self.imputers = []
         self.cv_lq_experts = []
         self.cv_uq_experts = []
         self.cv_mid_experts = []
+        self.total_imputer = None
         self.total_lq_expert = None
         self.total_uq_expert = None
         self.total_mid_expert = None
@@ -81,9 +85,18 @@ class MOEModel:
             self.test_indices = [range(self.data.shape[0])]
         else:
             skf = StratifiedKFold(n_splits=self.n_folds, shuffle=True, random_state=42)
-            for train_index, test_index in skf.split(self.data, self.clusters):
+            lower_quantile_value, upper_quantile_value = get_quantiles(self.target, self.lq * 100, self.uq * 100)
+            local_clusters = get_cluster_labels(self.target, lower_quantile_value, upper_quantile_value)
+            for train_index, test_index in skf.split(self.data, local_clusters):
                 self.train_indices.append(train_index)
                 self.test_indices.append(test_index)
+
+    def _create_imputer(self):
+        if self.imputer_id == 'KNN':
+            imputer = KNNImputer(missing_values=np.nan, n_neighbors=5, weights='distance')
+        else:
+            raise ValueError('Error !!! Invalid imputer. Correct values = {KNN} ... ')
+        return imputer
 
     def _create_quantile_estimator(self, q_type: str, params: Dict) -> GBR | HGBR | QR:
         if q_type == 'lower':
@@ -131,34 +144,46 @@ class MOEModel:
         return data, target
 
     def _learn_without_cv(self, params: List[Dict], preprocess: bool = False) -> None:
+        self.total_imputer = None
         self.total_lq_expert = None
         self.total_uq_expert = None
         self.total_mid_expert = None
+        imputer = self._create_imputer()
+        data = imputer.fit_transform(self.data)
+        lower_quantile_value, upper_quantile_value = get_quantiles(self.target, self.lq * 100, self.uq * 100)
+        local_clusters = get_cluster_labels(self.target, lower_quantile_value, upper_quantile_value)
         if preprocess:
-            data, target = self._preprocess(self.data, self.target)
+            data, target = self._preprocess(data, self.target)
         else:
-            data, target = self.data, self.target
+            data, target = data, self.target
         lower_estimator = self._create_quantile_estimator('lower', params[0])
-        lower_estimator.fit(data[self.clusters == 1], target[self.clusters == 1])
+        lower_estimator.fit(data[local_clusters == 1], target[local_clusters == 1])
         mid_estimator = self._create_mid_estimator(params[1])
-        mid_estimator.fit(data[self.clusters == 2], target[self.clusters == 2])
+        mid_estimator.fit(data[local_clusters == 2], target[local_clusters == 2])
         upper_estimator = self._create_quantile_estimator('upper', params[2])
-        upper_estimator.fit(data[self.clusters == 3], target[self.clusters == 3])
+        upper_estimator.fit(data[local_clusters == 3], target[local_clusters == 3])
+        self.total_imputer = deepcopy(imputer)
         self.total_lq_expert = deepcopy(lower_estimator)
         self.total_mid_expert = deepcopy(mid_estimator)
         self.total_uq_expert = deepcopy(upper_estimator)
         self.trained_total = True
 
     def _learn_with_cv(self, params: List[Dict], preprocess: bool = False) -> None:
+        self.imputers = []
         self.cv_lq_experts = []
         self.cv_mid_experts = []
         self.cv_uq_experts = []
         for f in range(self.n_folds):
+            imputer = self._create_imputer()
+            data = imputer.fit_transform(self.data[self.train_indices[f]])
+            self.imputers.append(deepcopy(imputer))
+            lower_quantile_value, upper_quantile_value = get_quantiles(self.target[self.train_indices[f]], self.lq * 100, self.uq * 100)
+            cv_clusters = get_cluster_labels(self.target[self.train_indices[f]], lower_quantile_value, upper_quantile_value)
             if preprocess:
-                data, target = self._preprocess(self.data[self.train_indices[f]], self.target[self.train_indices[f]])
+                data, target = self._preprocess(data, self.target[self.train_indices[f]])
             else:
-                data, target = self.data[self.train_indices[f]], self.target[self.train_indices[f]]
-            cv_clusters = self.clusters[self.train_indices[f]]
+                target = self.target[self.train_indices[f]]
+            # cv_clusters = self.clusters[self.train_indices[f]]
             lower_estimator = self._create_quantile_estimator('lower', params[0])
             lower_estimator.fit(data[cv_clusters == 1], target[cv_clusters == 1])
             self.cv_lq_experts.append(deepcopy(lower_estimator))
@@ -199,9 +224,10 @@ class MOEModel:
             rmse = []
             for f in range(self.n_folds):
                 y_test = self.target[self.test_indices[f]]
+                x_test = self.imputers[f].transform(self.data[self.test_indices[f]])
                 y_pred = self._predict(
                     [self.cv_lq_experts[f], self.cv_mid_experts[f], self.cv_uq_experts[f]],
-                    self.data[self.test_indices[f]],
+                    x_test,
                     preprocess=preprocess
                 )
                 r2score.append(r2_score(y_test, y_pred))
@@ -210,9 +236,9 @@ class MOEModel:
                 pcc.append(pearsonr(y_test, y_pred)[0])
                 rmse.append(root_mean_squared_error(y_test, y_pred))
             return (
-                round(float(np.mean(mae)), 3), round(float(np.mean(mse)), 3),
-                round(float(np.mean(rmse)), 3), round(float(np.mean(pcc)), 3),
-                round(float(np.mean(r2score)), 3)
+                round(float(np.mean(mae)), 4), round(float(np.mean(mse)), 4),
+                round(float(np.mean(rmse)), 4), round(float(np.mean(pcc)), 4),
+                round(float(np.mean(r2score)), 4)
             )
         raise ValueError('Error !!! Model not trained ...')
 
@@ -225,9 +251,10 @@ class MOEModel:
             pcc = []
             rmse = []
             for f in range(self.n_folds):
+                x_test = self.imputers[f].transform(b_data)
                 y_pred = self._predict(
                     [self.cv_lq_experts[f], self.cv_mid_experts[f], self.cv_uq_experts[f]],
-                    b_data,
+                    x_test,
                     preprocess=preprocess
                 )
                 r2score.append(r2_score(b_target, y_pred))
@@ -236,18 +263,19 @@ class MOEModel:
                 pcc.append(mean_fishers(pearsonr(b_target, y_pred)[0]))
                 rmse.append(root_mean_squared_error(b_target, y_pred))
             return (
-                round(float(np.mean(mae)), 3), round(float(np.mean(mse)), 3),
-                round(float(np.mean(rmse)), 3), round(float(np.mean(pcc)), 3),
-                round(float(np.mean(r2score)), 3)
+                round(float(np.mean(mae)), 4), round(float(np.mean(mse)), 4),
+                round(float(np.mean(rmse)), 4), round(float(np.mean(pcc)), 4),
+                round(float(np.mean(r2score)), 4)
             )
         raise ValueError('Error !!! Model not trained ...')
 
     def predict_blind_without_cv(self, b_data: np.ndarray, b_target: np.ndarray, preprocess: bool = False) \
             -> Tuple[float, float, float, float, float]:
         if self.trained_total:
+            x_test = self.total_imputer.transform(b_data)
             y_pred = self._predict(
                 [self.total_lq_expert, self.total_mid_expert, self.total_uq_expert],
-                b_data,
+                x_test,
                 preprocess=preprocess
             )
             r2score = r2_score(b_target, y_pred)
@@ -256,17 +284,18 @@ class MOEModel:
             pcc = mean_fishers(pearsonr(b_target, y_pred)[0])
             rmse = root_mean_squared_error(b_target, y_pred)
             return (
-                round(float(mae), 3), round(float(mse), 3), round(float(rmse), 3),
-                round(float(pcc), 3), round(float(r2score), 3)
+                round(float(mae), 4), round(float(mse), 4), round(float(rmse), 4),
+                round(float(pcc), 4), round(float(r2score), 4)
             )
         raise ValueError('Error !!! Model not trained ...')
 
     def predict_labels_blind_without_cv(self, b_data: np.ndarray, preprocess: bool = False) -> np.ndarray:
     # mainly used by the explainer
+        x_test = self.total_imputer.transform(b_data)
         if self.trained_total:
             return self._predict(
                 [self.total_lq_expert, self.total_mid_expert, self.total_uq_expert],
-                b_data,
+                x_test,
                 preprocess=preprocess
             )
         raise ValueError('Error !!! Model not trained ...')
