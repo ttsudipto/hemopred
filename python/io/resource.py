@@ -51,6 +51,8 @@ class DataResource:
         self.headers = None
         self.header_indices = None
         self.patient_ids = None
+        self.scaler = None
+        self.imputer = None
         self._find_target_indices(targets)
 
     def _find_target_indices(self, targets: str) -> None:
@@ -156,13 +158,25 @@ class DataResource:
         self.target_labels_original = self.target_labels_original[target_filter]
         self.patient_ids = self.patient_ids[target_filter]
 
-    def _impute_missing_values_knn(self) -> None:
-        imputer = KNNImputer(missing_values=np.nan, n_neighbors=5, weights='distance')
-        scaler = StandardScaler()
-        imputed_data_scaled = imputer.fit_transform(scaler.fit_transform(self.data))
+    def _impute_missing_values_knn(self, imputer: KNNImputer = None, scaler: StandardScaler = None) -> None:
+        if imputer is None:
+            imputer = KNNImputer(missing_values=np.nan, n_neighbors=5, weights='distance')
+            if scaler is None:
+                scaler = StandardScaler()
+                imputed_data_scaled = imputer.fit_transform(scaler.fit_transform(self.data))
+            else:
+                imputed_data_scaled = imputer.fit_transform(scaler.transform(self.data))
+        else:
+            if scaler is None:
+                scaler = StandardScaler()
+                imputed_data_scaled = imputer.transform(scaler.fit_transform(self.data))
+            else:
+                imputed_data_scaled = imputer.transform(scaler.transform(self.data))
         self.data = scaler.inverse_transform(imputed_data_scaled)
+        self.scaler = deepcopy(scaler)
+        self.imputer = deepcopy(imputer)
 
-    def read_from_csv(self, do_impute: bool = True) -> None:
+    def read_from_csv(self, do_impute: bool = False, imputer: KNNImputer = None, scaler: StandardScaler = None) -> None:
         self.headers = self._read_headers()
         self.header_indices = self._create_header_indices()
         self.data = self._read_data()
@@ -178,7 +192,7 @@ class DataResource:
         # print(self.data.shape, self.target.shape)
         ## Imputation ##
         if do_impute:
-            self._impute_missing_values_knn()
+            self._impute_missing_values_knn(imputer=imputer, scaler=scaler)
 
 def print_data_summary(res: DataResource) -> None:
     print()
@@ -191,9 +205,17 @@ def print_data_summary(res: DataResource) -> None:
     print()
 
 
-def read_data(file_name: str, n_features: int, targets: str, verbose: bool = False) -> DataResource:
+def read_data(
+        file_name: str,
+        n_features: int,
+        targets: str,
+        do_impute: bool = True,
+        imputer: KNNImputer = None,
+        scaler: StandardScaler = None,
+        verbose: bool = False
+) -> DataResource:
     res = DataResource(file_name, n_features, targets)
-    res.read_from_csv()
+    res.read_from_csv(do_impute=do_impute, imputer=imputer, scaler=scaler)
     if verbose:
         print_data_summary(res)
     return res
