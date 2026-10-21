@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>About - HemoPred</title>
+        <link rel = "stylesheet" type = "text/css" href = "css/main.css" />
+        <style>
+            li {
+                margin: 5px;
+            }
+            .narrow {
+                width: 80%;
+                margin: 0 10% 0 10%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class = "section_header">
+            <center><p class="title">HemoPred - Prediction of HbA2 and HbF from CBCs and RBC indices</p></center>
+        </div>
+
+        <div class = "section_menu">
+            <center>
+            <table cellpadding="3px">
+                <tr class="nav">
+                    <td class="nav"><a href="index.php" class="side_nav">Home</a></td>
+                    <td class="nav"><a href="#" class="active">About</a></td>
+                    <td class="nav"><a href="help.html" class="side_nav">Help</a></td>
+                    <td class="nav"><a href="team.html" class="side_nav">Team</a></td>
+                </tr>
+            </table>
+            </center>
+        </div>
+
+        <!--<div class = "section_left"></div>-->
+        <div class = "section_middle">
+            <ul class="narrow">
+                <li>
+                    HemoPred is a web-based tool to predict hemoglobin A2
+                    (HbA2) and fetal hemoglobin (HbF) from routine blood test
+                    features
+                </li>
+                <li>
+                    Regression models with Mixture of Experts (MoE) approach
+                    were developed to perform the predictions.
+                </li>
+                <li>
+                    The features used are as follows:
+                    <ul class="narrow">
+                        <li>Age</li>
+                        <li>Hemoglobin (Hb)</li>
+                        <li>Hematocrit (HCT)</li>
+                        <li>Red Blood Ćell (RBC) count</li>
+                        <li>Mean Corpuscular Volume (MCV)</li>
+                        <li>Mean Corpuscular Hemoglobin (MCH)</li>
+                        <li>Mean Corpuscular Hemoglobin Concentration (MCHC)</li>
+                        <li>Red cell Distribution Width - Coefficient of Variation (RDW-CV)</li>
+                        <li>White Blood Cell (WBC) count</li>
+                        <li>Platelet count</li>
+                    </ul>
+                </li>
+                <li>
+                    The models were trained on an Indian dataset of 5314
+                    individuals. <br/><br/>
+                    <table class="summary" style="width: 80%; margin: 0 10% 0 10%;">
+                        <tr>
+                            <th>Disease/Diagnostic label</th>
+                            <th>Number of patients</th>
+                        </tr>
+                        <tr>
+                            <td>Beta Thalassemia Trait (BTT)</td>
+                            <td>453</td>
+                        </tr>
+                        <tr>
+                            <td>Borderline HbA2</td>
+                            <td>58</td>
+                        </tr>
+                        <tr>
+                            <td>Hemoglobin D (HbD) Punjab Trait</td>
+                            <td>48</td>
+                        </tr>
+                        <tr>
+                            <td>Sickle Cell Trait</td>
+                            <td>21</td>
+                        </tr>
+                        <tr>
+                            <td>HbD Punjab/Beta Thalassemia double heterozygous</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>Normal</td>
+                            <td>4729</td>
+                        </tr>
+                    </table><br/>
+                </li>
+                <li>
+                    A subset of 80% data was used to develop the models with
+                    cross validation, and remaining 20% was used for held-out
+                    internal validation. Performance of the MoE models is given
+                    below.
+                    <br/><br/>
+                    <table class="summary" style="width: 80%; margin: 0 10% 0 10%;">
+                        <tr>
+                            <th rowspan="2">Task</th>
+                            <th colspan="2">5-fold cross validation</th>
+                            <th colspan="2">Held-out internal validation</th>
+                        </tr>
+                        <tr>
+                            <th>Mean absolute error</th>
+                            <th>R<sup>2</sup>-score</th>
+                            <th>Mean absolute error</th>
+                            <th>R<sup>2</sup>-score</th>
+                        </tr>
+                        <tr>
+                            <td>HbA2 prediction</td>
+                            <td>0.1654</td>
+                            <td>0.8442</td>
+                            <td>0.1550</td>
+                            <td>0.8605</td>
+                        </tr>
+                        <tr>
+                            <td>HbF prediction</td>
+                            <td>0.1394</td>
+                            <td>0.6055</td>
+                            <td>0.1436</td>
+                            <td>0.6062</td>
+                        </tr>
+                    </table><br/>
+                </li>
+                <li>
+                    SHapley Additive exPlanations (SHAP) was used to compute
+                    feature contributions
+                </li>
+<!--                <li>-->
+<!--                    The affinity-based classifier for the prediction of-->
+<!--                    diagnostic labels achieved 95% top-2-accuracy in a-->
+<!--                    multiclass setting. It also achieved 72% accuracy with 91%-->
+<!--                    sensitivity in disease versus normal classification (binary).-->
+<!--                </li>-->
+            </ul>
+            <br/>
+
+
+            <hr/>
+            <p style="font-size:0.9em; text-align:center; margin-bottom:3px;">
+                <b>Disclaimer -</b> This tool is strictly for Research Use only.
+                It should not be used for medical purposes without consulting with doctors.
+            </p>
+            <p style="font-size:0.9em; text-align:center; margin-top:3px;">
+                Please contact Dr. Izabela Nielsen
+                (<a style="color:#800000;" href="mailto:izabela@mp.aau.dk">izabela@mp.aau.dk</a>)
+                regarding any further queries.
+            </p>
+        </div>
+    </body>
+</html>
