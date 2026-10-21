@@ -1,7 +1,8 @@
 from typing import Dict
 import sys
 import os
-os.environ['MPLCONFIGDIR'] = os.getcwd() + "/.configs/"
+os.environ['MPLCONFIGDIR'] = '/tmp/'
+os.environ["XDG_CACHE_HOME"] = '/tmp/'
 import json
 import warnings
 import numpy as np
@@ -41,7 +42,7 @@ def predict(data: np.ndarray) -> Dict :
     _, pi_hbf = mapie_hbf_model.predict(data)
 
     optimal_affinity_classifier = load_affinity_classifier_from_file()
-    labels = optimal_affinity_classifier.classes
+    labels = optimal_affinity_classifier.classes_
     pred_class = optimal_affinity_classifier.predict(hb_data)
     pred_distance = optimal_affinity_classifier.predict_distance(hb_data)
     pred_affinity = optimal_affinity_classifier.predict_affinity_confidence(hb_data)

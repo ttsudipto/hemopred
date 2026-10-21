@@ -1,7 +1,8 @@
 from typing import Dict
 import sys
 import os
-os.environ['MPLCONFIGDIR'] = os.getcwd() + "/.configs/"
+os.environ['MPLCONFIGDIR'] = '/tmp/'
+os.environ["XDG_CACHE_HOME"] = '/tmp/'
 import json
 import warnings
 import numpy as np
