@@ -4,6 +4,8 @@ from ..io.resource import DataResource
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import f_regression
+from sklearn.metrics import accuracy_score, recall_score, f1_score, balanced_accuracy_score, confusion_matrix, \
+    classification_report, top_k_accuracy_score
 import numpy as np
 
 
@@ -112,3 +114,133 @@ def get_cluster_labels(target, lower_quantile_value, upper_quantile_value, verbo
             print(target[i], labels[i])
     return labels
 
+def compute_binary_metrics_with_ci(y_true, y_pred, n_bootstraps=500, ci_level=0.95):
+    rng = np.random.default_rng(42)
+    n_samples = len(y_true)
+
+    bootstrapped_acc = []
+    bootstrapped_sens = []
+    bootstrapped_spec = []
+    bootstrapped_f1s = []
+    bootstrapped_ba = []
+
+    for _ in range(n_bootstraps):
+        # Resample indices with replacement
+        indices = rng.choice(n_samples, size=n_samples, replace=True)
+        resampled_true = y_true[indices]
+        resampled_pred = y_pred[indices]
+
+        # Calculate metrics for the bootstrap sample
+        acc = accuracy_score(resampled_true, resampled_pred)
+        sens = recall_score(resampled_true, resampled_pred)
+        cm = confusion_matrix(resampled_true, resampled_pred)
+        tn, fp, fn, tp = cm.ravel()
+        spec = (tn/1.0) / (tn+fp)
+        f1s = f1_score(resampled_true, resampled_pred)
+        ba = balanced_accuracy_score(resampled_true, resampled_pred)
+
+        bootstrapped_acc.append(acc)
+        bootstrapped_sens.append(sens)
+        bootstrapped_spec.append(spec)
+        bootstrapped_f1s.append(f1s)
+        bootstrapped_ba.append(ba)
+
+    pt_acc = accuracy_score(y_true, y_pred)
+    pt_sens = recall_score(y_true, y_pred)
+    pt_cm = confusion_matrix(y_true, y_pred)
+    pt_tn, pt_fp, pt_fn, pt_tp = pt_cm.ravel()
+    pt_spec = (pt_tn / 1.0) / (pt_tn + pt_fp)
+    pt_f1s = f1_score(y_true, y_pred)
+    pt_ba = balanced_accuracy_score(y_true, y_pred)
+
+    pt_metrics = {
+        'accuracy': pt_acc,
+        'sensitivity': pt_sens,
+        'specificity': pt_spec,
+        'f1-score': pt_f1s,
+        'balanced accuracy': pt_ba
+    }
+
+    # Calculate percentiles for the boundaries
+    lower_pct = (1.0 - ci_level) / 2.0 * 100
+    upper_pct = (1.0 + ci_level) / 2.0 * 100
+
+    ci_metrics = {
+        'accuracy': np.percentile(bootstrapped_acc, [lower_pct, upper_pct]),
+        'sensitivity': np.percentile(bootstrapped_sens, [lower_pct, upper_pct]),
+        'specificity': np.percentile(bootstrapped_spec, [lower_pct, upper_pct]),
+        'f1-score': np.percentile(bootstrapped_f1s, [lower_pct, upper_pct]),
+        'balanced accuracy': np.percentile(bootstrapped_ba, [lower_pct, upper_pct])
+    }
+
+    return pt_metrics, ci_metrics
+
+def compute_multiclass_metrics_with_ci(y_true, y_pred, y_proba, labels=None, n_bootstraps=500, ci_level=0.95):
+    rng = np.random.default_rng(42)
+    n_samples = len(y_true)
+
+    ci_metrics = {
+        'top_1': [],
+        'top_2': [],
+        'top_3': [],
+        'macro_precision': [],
+        'macro_recall': [],
+        'macro_f1': [],
+        'weighted_precision': [],
+        'weighted_recall': [],
+        'weighted_f1': []
+    }
+
+    for _ in range(n_bootstraps):
+        indices = rng.choice(n_samples, size=n_samples, replace=True)
+        resampled_true = y_true[indices]
+        resampled_pred = y_pred[indices]
+        resampled_proba = y_proba[indices]
+
+        # Guard against a boot sample missing an entire class, which breaks metric matrices
+        if len(np.unique(resampled_true)) < len(labels):
+            continue
+
+        top_1_acc = top_k_accuracy_score(resampled_true, resampled_proba, k=1, labels=labels)
+        top_2_acc = top_k_accuracy_score(resampled_true, resampled_proba, k=2, labels=labels)
+        top_3_acc = top_k_accuracy_score(resampled_true, resampled_proba, k=3, labels=labels)
+        report = classification_report(resampled_true, resampled_pred, labels=labels, output_dict=True, zero_division=0)
+        macro_precision = report['macro avg']['precision']
+        macro_recall = report['macro avg']['recall']
+        macro_f1 = report['macro avg']['f1-score']
+        weighted_precision = report['weighted avg']['precision']
+        weighted_recall = report['weighted avg']['recall']
+        weighted_f1 = report['weighted avg']['f1-score']
+
+        ci_metrics['top_1'].append(top_1_acc)
+        ci_metrics['top_2'].append(top_2_acc)
+        ci_metrics['top_3'].append(top_3_acc)
+        ci_metrics['macro_precision'].append(macro_precision)
+        ci_metrics['macro_recall'].append(macro_recall)
+        ci_metrics['macro_f1'].append(macro_f1)
+        ci_metrics['weighted_precision'].append(weighted_precision)
+        ci_metrics['weighted_recall'].append(weighted_recall)
+        ci_metrics['weighted_f1'].append(weighted_f1)
+
+    pt_report = classification_report(y_true, y_pred, labels=labels, output_dict=True, zero_division=0)
+    pt_metrics = {
+        'top_1': top_k_accuracy_score(y_true, y_proba, k=1, labels=labels),
+        'top_2': top_k_accuracy_score(y_true, y_proba, k=2, labels=labels),
+        'top_3': top_k_accuracy_score(y_true, y_proba, k=3, labels=labels),
+        'macro_precision': pt_report['macro avg']['precision'],
+        'macro_recall': pt_report['macro avg']['recall'],
+        'macro_f1': pt_report['macro avg']['f1-score'],
+        'weighted_precision': pt_report['weighted avg']['precision'],
+        'weighted_recall': pt_report['weighted avg']['recall'],
+        'weighted_f1': pt_report['weighted avg']['f1-score']
+    }
+
+    # Extract boundaries using percentiles
+    lower_pct = (1.0 - ci_level) / 2.0 * 100
+    upper_pct = (1.0 + ci_level) / 2.0 * 100
+
+    intervals = {}
+    for metric_name, values in ci_metrics.items():
+        intervals[metric_name] = np.percentile(values, [lower_pct, upper_pct])
+
+    return pt_metrics, intervals

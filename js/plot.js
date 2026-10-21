@@ -46,7 +46,7 @@ function make_shap_plot(div_id, dataJSON, target) {
     var shap_values = JSON.parse(dataJSON).SHAP;
     var max_value = Math.max(...shap_values);
 
-    var features = ['Age', 'WBC', 'RBC', 'Hb', 'HCT', 'MCV', 'MCH', 'MCHC', 'RDW', 'PLT'];
+    var features = ['Age', 'WBC', 'RBC', 'Hb', 'HCT', 'MCV', 'MCH', 'MCHC', 'RDW-CV', 'PLT'];
     var shap_map = features.map((x, i) => [x, shap_values[i]]);
     shap_map = new Map([...shap_map].sort((a, b) => Math.abs(a[1]) - Math.abs(b[1])));
 
@@ -90,6 +90,7 @@ function make_shap_plot(div_id, dataJSON, target) {
         yaxis: {
             visible : true,
             zeroline: false,
+            automargin: true,
             color: 'black',
             linewidth: 2,
             ticks: 'outside',

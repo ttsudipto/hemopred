@@ -85,6 +85,7 @@ def dump_moe_model_to_file(model: MOEModel, target_type: str, without_data: bool
         dump(model.total_uq_expert, path_prefix + 'moe_' + target_type.lower() + '_total_uq_expert.joblib')
         dump(model.total_mid_expert, path_prefix + 'moe_' + target_type.lower() + '_total_mid_expert.joblib')
         dump(model.total_lq_expert, path_prefix + 'moe_' + target_type.lower() + '_total_lq_expert.joblib')
+        dump(model.total_imputer, path_prefix + 'moe_' + target_type.lower() + '_total_imputer.joblib')
         if model.data_preprocessor is not None:
             dump(model.data_preprocessor, path_prefix + 'moe_' + target_type.lower() + '_data_preprocessor.joblib')
         if model.target_preprocessor is not None:
@@ -218,6 +219,7 @@ def load_moe_model_from_file(target_type: str, without_data: bool = False) -> MO
     model.total_uq_expert = load(path_prefix + 'moe_' + target_type.lower() + '_total_uq_expert.joblib')  # load total_uq_expert
     model.total_mid_expert = load(path_prefix + 'moe_' + target_type.lower() + '_total_mid_expert.joblib')  # load total_mid_expert
     model.total_lq_expert = load(path_prefix + 'moe_' + target_type.lower() + '_total_lq_expert.joblib')  # load total_lq_expert
+    model.total_imputer = load(path_prefix + 'moe_' + target_type.lower() + '_total_imputer.joblib')  # load total_imputer
     try:
         model.data_preprocessor = load(path_prefix + 'moe_' + target_type.lower() + '_data_preprocessor.joblib')  # load data_preprocessor
         model.target_preprocessor = load(path_prefix + 'moe_' + target_type.lower() + '_target_preprocessor.joblib')  # load target_preprocessor

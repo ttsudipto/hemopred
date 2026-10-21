@@ -54,6 +54,7 @@ class MOEModelMetadata:
         self.lower_eid = model.lower_eid
         self.mid_eid = model.mid_eid
         self.upper_eid = model.upper_eid
+        self.imputer_id = model.imputer_id
         self.n_folds = model.n_folds
         self.feature_names = model.feature_names
         # self.gating_model = gating_model
@@ -61,9 +62,11 @@ class MOEModelMetadata:
         self.uq = model.uq
         self.trained_total = model.trained_total
         self.trained_cv = model.trained_cv
+        # self.imputers = []
         # self.cv_lq_experts = []
         # self.cv_uq_experts = []
         # self.cv_mid_experts = []
+        # self.total_imputer = None
         # self.total_lq_expert = None
         # self.total_uq_expert = None
         # self.total_mid_expert = None
@@ -72,11 +75,11 @@ class MOEModelMetadata:
         if self.without_data:
             self.data = np.ones(model.data.shape)
             self.target = np.ones(model.target.shape)
-            self.clusters = np.ones(model.clusters.shape)
+            # self.clusters = np.ones(model.clusters.shape)
         else:
             self.data = model.data
             self.target = model.target
-            self.clusters = model.clusters
+            # self.clusters = model.clusters
 
     def get_model(self, gating_model: GatingModel) -> MOEModel:
         # model = Model(self.estimator_id, deepcopy(self.data), deepcopy(self.sample_names), k=self.n_folds, do_shuffle=False)
@@ -84,7 +87,8 @@ class MOEModelMetadata:
             (self.lower_eid, self.mid_eid, self.upper_eid),
             deepcopy(self.data),
             deepcopy(self.target),
-            deepcopy(self.clusters),
+            # deepcopy(self.clusters),
+            None, # clusters argument
             deepcopy(gating_model),
             (self.lq, self.uq),
             self.n_folds,
@@ -94,7 +98,7 @@ class MOEModelMetadata:
         model.trained_cv = False
         model.train_indices = deepcopy(self.train_indices)
         model.test_indices = deepcopy(self.test_indices)
-        model.clusters = deepcopy(self.clusters)
+        # model.clusters = deepcopy(self.clusters)
         return model
 
 
@@ -106,7 +110,7 @@ class AffinityClassifierModelMetadata:
         self.feature_names = model.feature_names
         self.trained = model.trained
         self.centroids = model.centroids
-        self.classes = model.classes
+        self.classes_ = model.classes_
         # self.data_preprocessor = None
 
     def get_model(self) -> AffinityClassifier:
@@ -119,7 +123,7 @@ class AffinityClassifierModelMetadata:
         # print(self.trained)
         model.trained = self.trained
         model.centroids = deepcopy(self.centroids)
-        model.classes = deepcopy(self.classes)
+        model.classes_ = deepcopy(self.classes_)
         return model
 
 

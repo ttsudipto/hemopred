@@ -2,7 +2,7 @@
     $x = array();
     $y = array();
     $label = array();
-    $f = fopen("output/affinity/ac_pred_euclidean_inverse.tsv", "r");
+    $f = fopen("output/affinity/ac_pred_euclidean_rb.tsv", "r");
     fgetcsv($f, 0, "\t");
     while (($row = fgetcsv($f, 0, "\t")) !== false) {
         array_push($x, floatval($row[1]));
@@ -10,7 +10,7 @@
         array_push($label, $row[3]);
     }
     fclose($f);
-    $f = fopen("output/affinity/ac_pred_euclidean_inverse.tsv", "r");
+    $f = fopen("output/affinity/ac_pred_euclidean_rb.tsv", "r");
     fgetcsv($f, 0, "\t");
     $centroid_string = fgetcsv($f, 0, "\t")[7];
     fclose($f);

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Help - HemoPred</title>
+        <link rel = "stylesheet" type = "text/css" href = "css/main.css" />
+        <style>
+            li {
+                margin: 5px;
+            }
+            .narrow {
+                width: 60%;
+                margin: 0 20% 0 20%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class = "section_header">
+            <center><p class="title">HemoPred - Prediction of HbA2 and HbF from CBCs and RBC indices</p></center>
+        </div>
+
+        <div class = "section_menu">
+            <center>
+            <table cellpadding="3px">
+                <tr class="nav">
+                    <td class="nav"><a href="index.php" class="side_nav">Home</a></td>
+                    <td class="nav"><a href="about.html" class="side_nav">About</a></td>
+                    <td class="nav"><a href="#" class="active">Help</a></td>
+                    <td class="nav"><a href="team.html" class="side_nav">Team</a></td>
+                </tr>
+            </table>
+            </center>
+        </div>
+
+        <!--<div class = "section_left"></div>-->
+        <div class = "section_middle">
+            <div class="narrow">
+                <h2>1. Inputs</h2>
+                <p>The input can be provided using the form in the homepage.</p>
+                <center><img class="help_img" src="resource/help_input.png" style="height:600px; width:auto; max-width:100%;" /></center>
+
+                <h2>2. Outputs</h2>
+                <p>The components of the output page are explained as follows:</p>
+                <p style="font-weight:bold;">&bull;&nbsp; Table of provided inputs.</p>
+                <center><img class="help_img" src="resource/help_output_1.png" style="height:200px; width:auto; max-width:100%;" /></center>
+                <p style="font-weight:bold;">&bull;&nbsp; Predicted HbA2 and HbF values along with 95% confidence intervals.</p>
+                <center><img class="help_img" src="resource/help_output_2.png" style="height:280px; width:auto; max-width:100%;" /></center>
+                <p style="font-weight:bold;">&bull;&nbsp; Feature contributions.</p>
+                <center><img class="help_img" src="resource/help_output_3.png" style="height:500px; width:auto; max-width:100%;" /></center>
+                <p style="font-weight:bold;">&bull;&nbsp; HbA2 versus HbF space.</p>
+                <center><img class="help_img" src="resource/help_output_4.png" style="height:650px; width:auto; max-width:100%;" /></center>
+                <p style="font-weight:bold;">&bull;&nbsp; Diagnostic class prediction.</p>
+                <center><img class="help_img" src="resource/help_output_5.png" style="height:420px; width:auto; max-width:100%;" /></center>
+            </div>
+
+            <br/>
+
+            <hr/>
+            <p style="font-size:0.9em; text-align:center; margin-bottom:3px;">
+                <b>Disclaimer -</b> This tool is strictly for Research Use only.
+                It should not be used for medical purposes without consulting with doctors.
+            </p>
+            <p style="font-size:0.9em; text-align:center; margin-top:3px;">
+                Please contact Dr. Izabela Nielsen
+                (<a style="color:#800000;" href="mailto:izabela@mp.aau.dk">izabela@mp.aau.dk</a>)
+                regarding any further queries.
+            </p>
+        </div>
+    </body>
+    <style>
+        @media screen and (max-width: 1250px) {
+            .narrow {
+                width: 80%;
+                margin: 0 10% 0 10%;
+            }
+            .help_img {
+                width: 100%;
+                height: auto;
+            }
+        }
+        @media screen and (max-width: 1000px) {
+            .narrow {
+                width: 100%;
+                margin: 0;
+            }
+            .help_img {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</html>
+

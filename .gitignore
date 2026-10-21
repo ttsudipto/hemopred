@@ -222,3 +222,4 @@ __marimo__/
 .configs
 .directory
 *.kdev4
+.Rhistory

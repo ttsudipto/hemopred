@@ -11,7 +11,8 @@
         'Beta Thalassemia Trait' => 'Beta Thalassemia Trait',
         'Borderline high HbA2' => 'Borderline HbA2',
         'HbD Punjab Trait' => 'HbD Punjab Trait',
-        'Compound or heterogeneous' => 'HbD-Punjab/Beta Thalassemia double heterozygous',
+//         'Compound or heterogeneous' => 'HbD-Punjab/Beta Thalassemia double heterozygous',
+        'HbD-Punjab/Beta Thalassemia (double heterozygous)' => 'HbD-Punjab/Beta Thalassemia double heterozygous',
         'Normal' => 'Normal',
         'Sickle Cell Trait' => 'Sickle Cell Trait'
     );
