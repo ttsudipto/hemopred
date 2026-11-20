@@ -16,6 +16,14 @@
                 width:47%;
                 float:right;
             }
+            .citation{
+                width: 100%;
+                #color: maroon;
+                font-size: 1.15em;
+                border-left: solid 8px darkred;
+                padding: 10px 20px 10px 20px;
+                background-color: #eeeeee;
+            }
         </style>
     </head>
     <body>
@@ -58,6 +66,16 @@
                     To know more about HemoPred, go to <a style="color:#800000;" href="about.html">About</a>
                     page. For help, please refer to <a style="color:#800000;" href="help.html">Help</a> page.
                 </p>
+                <div class="citation">
+                    <b>Cite as:</b> Bhattacharjee, S., Christensen, F., Maity, S., Sharma, P.,
+                    Jamwal, M., Das, R., & Nielsen, I.E. (2026). HemoPred: A web application for
+                    hemoglobin A2 (HbA2) and fetal hemoglobin (HbF) prediction from routine blood
+                    features using Mixture of Experts and explainable artificial intelligence.
+                    <i>Computers in Biology and Medicine</i>, 219, 112077.
+                    <a style="color:#800000;" href="https://doi.org/10.1016/j.compbiomed.2026.112077" target="_blank">
+                        https://doi.org/10.1016/j.compbiomed.2026.112077
+                    </a>
+                </div>
             </div>
             <div id="sec-form">
                 <center><h1 style="margin-top:5px; margin-bottom:5px;">Inputs</h1></center>
@@ -132,7 +150,7 @@
                 It should not be used for medical purposes without consulting with doctors.
             </p>
             <p style="font-size:0.9em; text-align:center; margin-top:3px;">
-                Please contact Dr. Izabela Nielsen
+                Please contact Dr. Izabela Ewa Nielsen
                 (<a style="color:#800000;" href="mailto:izabela@mp.aau.dk">izabela@mp.aau.dk</a>)
                 regarding any further queries.
             </p>
